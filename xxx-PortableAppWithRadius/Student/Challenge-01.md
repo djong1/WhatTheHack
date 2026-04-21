@@ -1,99 +1,70 @@
-# Challenge 01 - <Title of Challenge>
+# Challenge 01 - Install and Configure the Radius Control Plane
 
 [< Previous Challenge](./Challenge-00.md) - **[Home](../README.md)** - [Next Challenge >](./Challenge-02.md)
 
-***This is a template for a single challenge. The italicized text provides hints & examples of what should or should NOT go in each section.  You should remove all italicized & sample text and replace with your content.***
+## Pre-requisites
 
-## Pre-requisites (Optional)
-
-*Your hack's "Challenge 0" should cover pre-requisites for the entire hack, and thus this section is optional and may be omitted.  If you wish to spell out specific previous challenges that must be completed before starting this challenge, you may do so here.*
+- Completion of [Challenge 00](./Challenge-00.md) and all tooling installed on your workstation (Azure CLI, `kubectl`, a code editor, etc.).
+- An Azure subscription in which you have permission to create resources.
+- A running Kubernetes cluster that you can reach from your workstation with `kubectl`. Any CNCF-conformant cluster is supported (for example AKS, kind, k3d, or K3s).
 
 ## Introduction
 
-*This section should provide an overview of the technologies or tasks that will be needed to complete the this challenge.  This includes the technical context for the challenge, as well as any new "lessons" the attendees should learn before completing the challenge.*
+[Radius](https://radapp.io) is an open-source, cloud-native application platform that lets developers describe their entire application — containers, databases, message brokers, identities, and the cloud resources they depend on — as a single, portable model. Platform engineers use Radius to define reusable *environments* and *recipes* that automatically provision the right infrastructure, apply organizational policy, and keep developers focused on their code rather than the cloud plumbing underneath.
 
-*Optionally, the coach or event host is encouraged to present a mini-lesson (with a PPT or video) to set up the context & introduction to each challenge. A summary of the content of that mini-lesson is a good candidate for this Introduction section*
+Before any of that is possible, somebody needs to stand up the **Radius control plane**. The control plane is the set of services that run inside a Kubernetes cluster and coordinate everything Radius does: it accepts deployments from the `rad` CLI, drives Bicep-based rendering, reconciles application resources, and talks to your cloud provider when a recipe provisions infrastructure. Getting this foundation right — the cluster, the CLI, the control plane components, and the initial workspace/environment — is what makes the rest of the hack possible.
 
-*For example:*
-
-When setting up an IoT device, it is important to understand how 'thingamajigs' work. Thingamajigs are a key part of every IoT device and ensure they are able to communicate properly with edge servers. Thingamajigs require IP addresses to be assigned to them by a server and thus must have unique MAC addresses. In this challenge, you will get hands on with a thingamajig and learn how one is configured.
+In this challenge, you will play the role of the platform engineer on your team. Your job is to prepare a workstation and a Kubernetes cluster, install the Radius control plane into that cluster, and verify that everything is wired up correctly so that in later challenges you can author recipes, define environments, and deploy a portable application with Radius.
 
 ## Description
 
-*This section should clearly state the goals of the challenge and any high-level instructions you want the students to follow. You may provide a list of specifications required to meet the goals. If this is more than 2-3 paragraphs, it is likely you are not doing it right.*
+Your team has been asked to get a working Radius installation ready for the rest of the hack. By the end of this challenge, every team member should be able to talk to the same Radius control plane from their own workstation.
 
-***NOTE:** Do NOT use ordered lists as that is an indicator of 'step-by-step' instructions. Instead, use bullet lists to list out goals and/or specifications.*
+As a team, install and configure Radius so that the following are true:
 
-***NOTE:** You may use Markdown sub-headers to organize key sections of your challenge description.*
+- The `rad` CLI is installed on each team member's workstation and the installed version is reported correctly.
+- A Kubernetes cluster is available and the current `kubectl` context points at it.
+- The Radius control plane is installed into the cluster (in its own namespace) and all of its pods are healthy.
+- A Radius **workspace** is configured locally on each workstation so that the `rad` CLI talks to the cluster you just prepared.
+- A default Radius **environment** exists in the control plane and is listed as the active environment for your workspace. This environment will be reused and extended in the following challenges (recipes, applications, and deployments).
+- Your team can describe, in its own words, what the Radius control plane is, which components were installed, and how the `rad` CLI, the workspace, and the environment relate to each other.
 
-*Optionally, you may provide resource files such as a sample application, code snippets, or templates as learning aids for the students. These files are stored in the hack's `Student/Resources` folder. It is the coach's responsibility to package these resources into a Resources.zip file and provide it to the students at the start of the hack.*
+Treat this as a *platform setup* exercise rather than an application exercise — there is nothing to deploy yet. The goal is a clean, verifiable Radius installation that the rest of the team can build on.
 
-***NOTE:** Do NOT provide direct links to files or folders in the What The Hack repository from the student guide. Instead, you should refer to the Resource.zip file provided by the coach.*
-
-***NOTE:** As an exception, you may provide a GitHub 'raw' link to an individual file such as a PDF or Office document, so long as it does not open the contents of the file in the What The Hack repo on the GitHub website.*
-
-***NOTE:** Any direct links to the What The Hack repo will be flagged for review during the review process by the WTH V-Team, including exception cases.*
-
-*Sample challenge text for the IoT Hack Of The Century:*
-
-In this challenge, you will properly configure the thingamajig for your IoT device so that it can communicate with the mother ship.
-
-You can find a sample `thingamajig.config` file in the `/ChallengeXX` folder of the Resources.zip file provided by your coach. This is a good starting reference, but you will need to discover how to set exact settings.
-
-Please configure the thingamajig with the following specifications:
-- Use dynamic IP addresses
-- Only trust the following whitelisted servers: "mothership", "IoTQueenBee" 
-- Deny access to "IoTProxyShip"
-
-You can view an architectural diagram of an IoT thingamajig here: [Thingamajig.PDF](/Student/Resources/Architecture.PDF?raw=true).
+> **NOTE:** Do not hand-edit cluster manifests to "make it work". Use the supported Radius installation path so your environment matches what future challenges expect.
 
 ## Success Criteria
 
-*Success criteria goes here. The success criteria should be a list of checks so a student knows they have completed the challenge successfully. These should be things that can be demonstrated to a coach.* 
-
-*The success criteria should not be a list of instructions.*
-
-*Success criteria should always start with language like: "Validate XXX..." or "Verify YYY..." or "Show ZZZ..." or "Demonstrate you understand VVV..."*
-
-*Sample success criteria for the IoT sample challenge:*
-
 To complete this challenge successfully, you should be able to:
-- Verify that the IoT device boots properly after its thingamajig is configured.
-- Verify that the thingamajig can connect to the mothership.
-- Demonstrate that the thingamajic will not connect to the IoTProxyShip
+
+- Verify that `rad version` runs on your workstation and reports a valid CLI and (once installed) control plane version.
+- Verify that the Radius control plane pods are in a `Running` / `Ready` state in the Radius namespace of your Kubernetes cluster.
+- Show that `rad workspace list` displays a workspace pointing at your cluster and that it is marked as the current workspace.
+- Show that `rad env list` returns at least one environment and that it is selected as the default for your workspace.
+- Demonstrate that you understand the role of the Radius control plane, the `rad` CLI, workspaces, and environments, and how these pieces are used together when a developer runs `rad deploy`.
 
 ## Learning Resources
 
-_List of relevant links and online articles that should give the attendees the knowledge needed to complete the challenge._
-
-*Think of this list as giving the students a head start on some easy Internet searches. However, try not to include documentation links that are the literal step-by-step answer of the challenge's scenario.*
-
-***Note:** Use descriptive text for each link instead of just URLs.*
-
-*Sample IoT resource links:*
-
-- [What is a Thingamajig?](https://www.bing.com/search?q=what+is+a+thingamajig)
-- [10 Tips for Never Forgetting Your Thingamajic](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
-- [IoT & Thingamajigs: Together Forever](https://www.youtube.com/watch?v=yPYZpwSpKmA)
+- [Radius documentation — Guides](https://docs.radapp.io/guides/) — entry point for installation and configuration guidance.
+- [What is Radius?](https://docs.radapp.io/concepts/) — overview of Radius concepts, including the control plane, environments, and recipes.
+- [Install the rad CLI](https://docs.radapp.io/installation/) — how to obtain and verify the Radius command-line tool on Windows, macOS, and Linux.
+- [Install Radius on a Kubernetes cluster](https://docs.radapp.io/guides/operations/kubernetes/install/) — supported cluster types, required permissions, and installation options.
+- [Radius workspaces](https://docs.radapp.io/guides/operations/workspaces/overview/) — what a workspace is and how it connects the `rad` CLI to a control plane.
+- [Radius environments overview](https://docs.radapp.io/guides/deploy-apps/environments/overview/) — how environments relate to the control plane and why they matter for later challenges.
+- [Kubernetes: Install and Set Up kubectl](https://kubernetes.io/docs/tasks/tools/) — if you still need to configure cluster access on your workstation.
 
 ## Tips
 
-*This section is optional and may be omitted.*
-
-*Add tips and hints here to give students food for thought. Sample IoT tips:*
-
-- IoTDevices can fail from a broken heart if they are not together with their thingamajig. Your device will display a broken heart emoji on its screen if this happens.
-- An IoTDevice can have one or more thingamajigs attached which allow them to connect to multiple networks.
+- Any CNCF-conformant Kubernetes cluster will work. If you don't have one handy, a local cluster such as **kind** or **k3d** is perfectly fine for this hack and is fast to reset if something goes wrong.
+- The account you use to install Radius needs cluster-admin level permissions on the Kubernetes cluster, because the control plane installs CRDs and cluster-scoped resources.
+- If the installer seems to hang, check the pods in the Radius namespace — image pulls on a fresh cluster can take a few minutes before everything becomes `Ready`.
+- Each team member should create their **own** workspace on their workstation, but all of them should point at the **same** control plane so that the team shares a single environment in the next challenges.
+- You can always start over: uninstalling Radius from the cluster and re-running the installer is a supported workflow and is much faster than debugging a half-broken install.
 
 ## Advanced Challenges (Optional)
 
-*If you want, you may provide additional goals to this challenge for folks who are eager.*
+Finished early? Try one or more of the following:
 
-*This section is optional and may be omitted.*
-
-*Sample IoT advanced challenges:*
-
-Too comfortable?  Eager to do more?  Try these additional challenges!
-
-- Observe what happens if your IoTDevice is separated from its thingamajig.
-- Configure your IoTDevice to connect to BOTH the mothership and IoTQueenBee at the same time.
+- Install Radius into a **different Kubernetes distribution** (for example, swap AKS for kind, or vice versa) and confirm the rest of the hack still works against it.
+- Explore the Radius **dashboard** that is installed with the control plane and use it to inspect your workspace and environment visually.
+- Write a short runbook for your team explaining how to **upgrade** or **uninstall** Radius cleanly, including what happens to existing environments and applications.
