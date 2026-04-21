@@ -16,8 +16,8 @@ In this hack you will be solving the common business problem that companies in t
 
 - Challenge 00: **[Prerequisites - Ready, Set, GO!](Student/Challenge-00.md)**
 	 - Prepare your workstation to work with Azure.
-- Challenge 01: **[Title of Challenge](Student/Challenge-01.md)**
-	 - Description of challenge
+- Challenge 01: **[Install and Configure the Radius Control Plane](Student/Challenge-01.md)**
+	 - Prepare a Kubernetes cluster, install the `rad` CLI, and deploy the Radius control plane and an initial environment that will be used by the later challenges.
 - Challenge 02: **[Title of Challenge](Student/Challenge-02.md)**
 	 - Description of challenge
 - Challenge 03: **[Title of Challenge](Student/Challenge-03.md)**
