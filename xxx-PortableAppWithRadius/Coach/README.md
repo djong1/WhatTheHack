@@ -12,12 +12,12 @@ This hack includes an optional [lecture presentation](Lectures.pptx) that featur
 
 - Challenge 00: **[Prerequisites - Ready, Set, GO!](./Solution-00.md)**
 	 - Prepare your workstation to work with Azure.
-- Challenge 01: **[Title of Challenge](./Solution-01.md)**
-	 - Description of challenge
-- Challenge 02: **[Title of Challenge](./Solution-02.md)**
-	 - Description of challenge
-- Challenge 03: **[Title of Challenge](./Solution-03.md)**
-	 - Description of challenge
+- Challenge 01: **[Install and Configure the Radius Control Plane](./Solution-01.md)**
+	 - Provision an AKS cluster, install the Radius control plane, and configure workspaces and environments so the team shares a single, healthy Radius installation for all subsequent challenges.
+- Challenge 02: **[Define a PostgreSQL Resource Type and Author Recipes for Azure and Azure Local](./Solution-02.md)**
+	 - Define a user-defined `Radius.Resources/postgreSQL` resource type and author two recipes: one that provisions an Azure Database for PostgreSQL Flexible Server via an Azure Verified Module, and one that runs PostgreSQL as a container on AKS for an Azure Local environment.
+- Challenge 03: **[Deploy a Portable .NET 10 Web App on Azure and Azure Local with Radius](./Solution-03.md)**
+	 - Define a `Radius.Resources/webApp` resource type, author Azure App Service and AKS recipes, wire the web app to the PostgreSQL resource from Challenge 02 using Radius connections, and verify the same container image runs unchanged in both environments.
 - Challenge 04: **[Title of Challenge](./Solution-04.md)**
 	 - Description of challenge
 - Challenge 05: **[Title of Challenge](./Solution-05.md)**
